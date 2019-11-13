@@ -11,3 +11,7 @@ const alunasSchema = new mongoose.Schema({
         leu: String,
     }]
 })
+
+const Alunas = mongoose.model('Alunas', alunasSchema);// chama o schema com parametros
+
+module.exports = Alunas; //chama o modulo

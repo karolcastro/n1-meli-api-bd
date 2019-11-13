@@ -1,9 +1,16 @@
-const alunas = require("../model/alunas.json")
+// const alunas = require("../model/alunas.json")// nao precisa mais pq temos os dados em um JS
+const Alunas = require('../model/alunas')
+
 const fs = require('fs');
 
 exports.get = (req, res) => {
-  console.log(req.url)
-  res.status(200).send(alunas)
+  // console.log(req.url)
+  // res.status(200).send(alunas)
+
+  Alunas.find(function (err, alunas) {
+    console.log(alunas);
+    res.status(200).send(alunas)
+  })
 }
 
 exports.getById = (req, res) => {
@@ -27,14 +34,17 @@ exports.getBooks = (req, res) => {
 }
 
 exports.getSp = (req, res) => {
-  const nasceuSp = alunas.filter(aluna => {
-    console.log(aluna)
-    return aluna.nasceuEmSp == "true"
-  })
-  const meninasSp = nasceuSp.map(aluna => aluna.nome)
+  Alunas.find(function (err, alunas) {// registros do banco de dados
+    //if(err) res.status(500).send(err)
+    console.log(alunas);
 
-  res.status(200).send(meninasSp)
+    const nasceuSp = alunas.filter(aluna => aluna.nasceuEmSp == 'true')
+    const meninasSp = nasceuSp.map(aluna => aluna.nome)
+    res.status(200).send(meninasSp)
+
+  })
 }
+
 
 exports.getAge = (req, res) => {
   const id = req.params.id
@@ -62,7 +72,7 @@ function calcularIdade(anoDeNasc, mesDeNasc, diaDeNasc) {
   return idade
 }
 
-exports.post = (req, res) => { 
+exports.post = (req, res) => {
   const { nome, dateOfBirth, nasceuEmSp, id, livros } = req.body;
   alunas.push({ nome, dateOfBirth, nasceuEmSp, id, livros });
 
@@ -71,7 +81,7 @@ exports.post = (req, res) => {
       return res.status(500).send({ message: err });
     }
     console.log("The file was saved!");
-  }); 
+  });
 
   return res.status(201).send(alunas);
 }
@@ -84,10 +94,10 @@ exports.postBooks = (req, res) => {
   }
   const { titulo, leu } = req.body;
   alunas[aluna.id - 1].livros.push({ titulo, leu });
-  
+
   fs.writeFile("./src/model/alunas.json", JSON.stringify(alunas), 'utf8', function (err) {
     if (err) {
-        return res.status(500).send({ message: err });
+      return res.status(500).send({ message: err });
     }
     console.log("The file was saved!");
   });
