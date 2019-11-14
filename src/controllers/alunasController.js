@@ -14,23 +14,35 @@ exports.get = (req, res) => {
 }
 
 exports.getById = (req, res) => {
-  const id = req.params.id
-  if (id > 34 || id <= 0) {
-    res.redirect(301, "https://en.wikipedia.org/wiki/Man-in-the-middle_attack")
-  }
-  res.status(200).send(alunas.find(aluna => aluna.id == id))
+  const id = req.params.id//parametro para a requisicao
+  Alunas.findById(id, function (err, aluna) {// 
+    if (err) return res.status(500).send(err);
+
+    if (!aluna) {
+      return res.status(200).send({ message: `Infelizmente não localizamos a aluna de id: ${id}` })
+    }
+    res.status(200).send(aluna);
+  })
 }
+//   if (id > 34 || id <= 0) {
+//     res.redirect(301, "https://en.wikipedia.org/wiki/Man-in-the-middle_attack")
+//   }
+//   res.status(200).send(alunas.find(aluna => aluna.id == id))
+// }
 
 exports.getBooks = (req, res) => {
   const id = req.params.id
-  const aluna = alunas.find(aluna => aluna.id == id)
-  if (!aluna) {
-    res.send("Nao encontrei essa garota")
+  Alunas.findById(id, function (err, aluna) {
+    // const aluna = alunas.find(aluna => aluna.id == id)
+    if (!aluna) {
+      res.send("Nao encontrei essa garota")
+    }
+    const livrosAluna = aluna.livros
+    const livrosLidos = livrosAluna.filter(livro => livro.leu == "true")
+    const tituloLivros = livrosLidos.map(livro => livro.titulo)// retorna somente o titulo do livro que a garota leu
+    res.send(tituloLivros)
   }
-  const livrosAluna = aluna.livros
-  const livrosLidos = livrosAluna.filter(livro => livro.leu == "true")
-  const tituloLivros = livrosLidos.map(livro => livro.titulo)
-  res.send(tituloLivros)
+  )
 }
 
 exports.getSp = (req, res) => {
@@ -41,21 +53,27 @@ exports.getSp = (req, res) => {
     const nasceuSp = alunas.filter(aluna => aluna.nasceuEmSp == 'true')
     const meninasSp = nasceuSp.map(aluna => aluna.nome)
     res.status(200).send(meninasSp)
-
   })
 }
 
-
 exports.getAge = (req, res) => {
   const id = req.params.id
-  const aluna = alunas.find(item => item.id == id)
-  const dataNasc = aluna.dateOfBirth
-  const arrData = dataNasc.split("/")
-  const dia = arrData[0]
-  const mes = arrData[1]
-  const ano = arrData[2]
-  const idade = calcularIdade(ano, mes, dia)
-  res.status(200).send({ idade })
+  Alunas.findById(id, function (err, aluna) {
+
+    if (!aluna) {
+      res.send("Nao encontrei essa garota")
+    }
+
+    // const aluna = alunas.find(item => item.id == id)
+    const dataNasc = aluna.dateOfBirth
+    const arrData = dataNasc.split("/")
+    const dia = arrData[0]
+    const mes = arrData[1]
+    const ano = arrData[2]
+    const idade = calcularIdade(ano, mes, dia)
+    res.status(200).send({ idade })
+  }
+  )
 }
 
 function calcularIdade(anoDeNasc, mesDeNasc, diaDeNasc) {
