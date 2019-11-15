@@ -1,5 +1,6 @@
 const express = require("express")
 const mongoose = require("mongoose")// faz o require do mongoose
+const bodyParser = require("body-parser")
 const app = express()
 
 mongoose.connect('mongodb://localhost:27017/reprograma', {useNewUrlParser: true});// para chamar a conexao
@@ -16,7 +17,7 @@ const index = require("./routes/index")
 const alunas = require("./routes/alunasRoute")
 const professoras = require("./routes/professorasRoute")
 
-app.use(express.json());
+// app.use(express.json()); talvez faca a mesma coisa que o bodyParse
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*")
@@ -26,6 +27,8 @@ app.use(function(req, res, next) {
   )
   next()
 })
+
+app.use(bodyParser.json());// indicar que vai ser utilizado
 
 app.use("/", index)
 app.use("/alunas", alunas)

@@ -5,12 +5,18 @@ const alunasSchema = new mongoose.Schema({
     nome: { type: String },
     dateOfBirth: { type: String },
     nasceuEmSp: { type: String },
-    id: { type: Number },
+    // id: { type: Number },
     livros: [{
+        _id: false,
         titulo: String,
-        leu: String,
+        leu: String
     }]
+},
+
+{
+	versionKey: false
 })
+
 
 const Alunas = mongoose.model('Alunas', alunasSchema);// chama o schema com parametros
 
