@@ -128,6 +128,8 @@ exports.postBooks = (req, res) => {
 
     aluna.save(function(err){
       if (err) res.status(500).send(err);
+
+      res.status(201).send(aluna)
     })
   }
   )

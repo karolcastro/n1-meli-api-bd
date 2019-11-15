@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const alunasSchema = new mongoose.Schema({
     nome: { type: String },
     dateOfBirth: { type: String },
